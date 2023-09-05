@@ -1,6 +1,6 @@
 /*
 
-    Executor that schedules and executes tasks.
+    SingleThreadExecutor is a simple Executor that runs on a single thread. 
 
 */
 
@@ -12,12 +12,12 @@ use crate::utils::Result;
 use std::future::Future;
 use std::task::{ Context, Poll };
 
-pub struct Executor
+pub struct SingleThreadExecutor
 {
     tasks: TaskQueue,
 }
 
-impl Executor
+impl SingleThreadExecutor
 {
     //--------------------------------------------------------------------------
     //  Creates a new Executor.
