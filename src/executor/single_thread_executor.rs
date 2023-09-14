@@ -5,16 +5,14 @@
 */
 
 use crate::task_queue::TaskQueue;
-use crate::task::Task;
 use crate::waker::waker_fn;
 use crate::utils::Result;
 
-use std::future::Future;
 use std::task::{ Context, Poll };
 
 pub struct SingleThreadExecutor
 {
-    tasks: TaskQueue,
+    pub tasks: TaskQueue,
 }
 
 impl SingleThreadExecutor
@@ -31,22 +29,13 @@ impl SingleThreadExecutor
     }
 
     //--------------------------------------------------------------------------
-    //  Spawns a new Task onto the queue.
-    //--------------------------------------------------------------------------
-    pub fn spawn<F>( &mut self, future: F )
-        where F: Future<Output = ()> + Send + 'static
-    {
-        let task = Task::new(future);
-        self.tasks.push(task);
-    }
-
-    //--------------------------------------------------------------------------
     //  Runs the Executor.
     //--------------------------------------------------------------------------
     pub fn run( &mut self ) -> Result<()>
     {
         loop
         {
+            self.tasks.receive();
             while let Some(task) = self.tasks.pop()
             {
                 let waker =

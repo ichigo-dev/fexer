@@ -5,12 +5,10 @@
 */
 
 mod single_thread_executor;
-
 use single_thread_executor::SingleThreadExecutor;
 
 use crate::utils::Result;
-
-use std::future::Future;
+use crate::spawner::Spawner;
 
 pub enum Executor
 {
@@ -28,14 +26,16 @@ impl Executor
     }
 
     //--------------------------------------------------------------------------
-    //  Spawns a new Task onto the queue.
+    //  Gets a Spawner for the Executor.
     //--------------------------------------------------------------------------
-    pub fn spawn<F>( &mut self, future: F )
-        where F: Future<Output = ()> + Send + 'static
+    pub fn spawner( &self ) -> Spawner
     {
         match self
         {
-            Self::SingleThread(executor) => executor.spawn(future),
+            Self::SingleThread(executor) =>
+            {
+                Spawner::new(executor.tasks.sender().clone())
+            }
         }
     }
 
