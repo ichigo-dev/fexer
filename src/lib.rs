@@ -1,13 +1,33 @@
-/*
-
-    # Fexer
-
-    This is a runtime crate for executing tasks asynchronously and
-    multithreaded.
-
-*/
-
 #![allow(dead_code)]
+
+//------------------------------------------------------------------------------
+/// # Fexer
+///
+/// This is a runtime crate for executing tasks asynchronously and
+/// multithreaded.
+///
+///
+/// ## Example
+///
+/// ```
+/// use fexer::Executor;
+///
+/// use std::thread;
+///
+/// async fn async_function()
+/// {
+///    println!("Hello from async function!");
+/// }
+///
+/// fn main()
+/// {
+///    let mut executor = Executor::single();
+///    let spawner = executor.spawner();
+///    spawner.spawn(async_function);
+///    executor.run().unwrap();
+/// }
+/// ```
+//------------------------------------------------------------------------------
 
 mod future;
 mod task;
@@ -32,12 +52,12 @@ mod tests
     }
 
     //--------------------------------------------------------------------------
-    //  Tests the Executor.
+    // Tests the Executor.
     //--------------------------------------------------------------------------
     #[test]
     fn run_async_function()
     {
-        let mut executor = Executor::new();
+        let mut executor = Executor::single();
         let spawner = executor.spawner();
         spawner.spawn(async
         {

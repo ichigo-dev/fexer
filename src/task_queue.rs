@@ -1,14 +1,17 @@
-/*
-
-    Queue of Tasks to be executed by the executor.
-
-*/
+//------------------------------------------------------------------------------
+/// # Task Queue
+///
+/// Queue of Tasks to be executed by the executor.
+//------------------------------------------------------------------------------
 
 use crate::task::Task;
 
 use std::rc::Rc;
 use std::sync::mpsc::{ self, Receiver, Sender };
 
+//------------------------------------------------------------------------------
+/// TaskQueue
+//------------------------------------------------------------------------------
 pub struct TaskQueue
 {
     sender: Sender<Rc<Task>>,
@@ -19,7 +22,7 @@ pub struct TaskQueue
 impl TaskQueue
 {
     //--------------------------------------------------------------------------
-    //  Creates a new TaskQueue.
+    /// Creates a new TaskQueue.
     //--------------------------------------------------------------------------
     pub fn new() -> Self
     {

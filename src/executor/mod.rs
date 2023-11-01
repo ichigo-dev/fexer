@@ -1,8 +1,8 @@
-/*
-
-    Executor that schedules and executes tasks.
-
-*/
+//------------------------------------------------------------------------------
+/// # Executor
+///
+/// Executor that schedules and executes tasks.
+//------------------------------------------------------------------------------
 
 mod single_thread_executor;
 mod multi_thread_executor;
@@ -12,6 +12,9 @@ use multi_thread_executor::MultiThreadExecutor;
 use crate::utils::Result;
 use crate::spawner::Spawner;
 
+//------------------------------------------------------------------------------
+/// Executor
+//------------------------------------------------------------------------------
 pub enum Executor
 {
     SingleThread(SingleThreadExecutor),
@@ -21,7 +24,7 @@ pub enum Executor
 impl Executor
 {
     //--------------------------------------------------------------------------
-    //  Creates a new Executor.
+    /// Creates a new Executor.
     //--------------------------------------------------------------------------
     pub fn single() -> Self
     {
@@ -34,7 +37,7 @@ impl Executor
     }
 
     //--------------------------------------------------------------------------
-    //  Gets a Spawner for the Executor.
+    /// Gets a Spawner for the Executor.
     //--------------------------------------------------------------------------
     pub fn spawner( &self ) -> Spawner
     {
@@ -53,7 +56,7 @@ impl Executor
     }
 
     //--------------------------------------------------------------------------
-    //  Runs the Executor.
+    /// Runs the Executor.
     //--------------------------------------------------------------------------
     pub fn run( &mut self ) -> Result<()>
     {

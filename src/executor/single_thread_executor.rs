@@ -1,8 +1,8 @@
-/*
-
-    SingleThreadExecutor is a simple Executor that runs on a single thread. 
-
-*/
+//------------------------------------------------------------------------------
+/// # Single Thread Executor
+///
+/// SingleThreadExecutor is a simple Executor that runs on a single thread. 
+//------------------------------------------------------------------------------
 
 use crate::task_queue::TaskQueue;
 use crate::waker::waker_fn;
@@ -18,7 +18,7 @@ pub struct SingleThreadExecutor
 impl SingleThreadExecutor
 {
     //--------------------------------------------------------------------------
-    //  Creates a new Executor.
+    /// Creates a new Executor.
     //--------------------------------------------------------------------------
     pub fn new() -> Self
     {
@@ -29,7 +29,7 @@ impl SingleThreadExecutor
     }
 
     //--------------------------------------------------------------------------
-    //  Runs the Executor.
+    /// Runs the Executor.
     //--------------------------------------------------------------------------
     pub fn run( &mut self ) -> Result<()>
     {

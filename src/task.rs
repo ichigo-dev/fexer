@@ -1,15 +1,18 @@
-/*
-
-    Tasks executed asynchronously by the runtime. This is an abstraction
-    structure for coroutines.
-
-*/
+//------------------------------------------------------------------------------
+/// # Task
+///
+/// Tasks executed asynchronously by the runtime. This is an abstraction
+/// structure for coroutines.
+//------------------------------------------------------------------------------
 
 use crate::future::BoxedFuture;
 
 use std::cell::RefCell;
 use std::future::Future;
 
+//------------------------------------------------------------------------------
+/// Task
+//------------------------------------------------------------------------------
 pub struct Task
 {
     pub future: RefCell<BoxedFuture<'static, ()>>,
@@ -18,7 +21,7 @@ pub struct Task
 impl Task
 {
     //--------------------------------------------------------------------------
-    //  Creates a new Task.
+    /// Creates a new Task.
     //--------------------------------------------------------------------------
     pub fn new<F>( future: F ) -> Self
         where F: Future<Output = ()> + Send + 'static

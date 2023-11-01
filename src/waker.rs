@@ -1,13 +1,16 @@
-/*
-
-    Waker to notify that a task is ready to run.
-
-*/
+//------------------------------------------------------------------------------
+/// # Waker
+///
+/// Waker to notify that a task is ready to run.
+//------------------------------------------------------------------------------
 
 use std::mem::ManuallyDrop;
 use std::sync::Arc;
 use std::task::{ RawWaker, RawWakerVTable, Waker };
 
+//------------------------------------------------------------------------------
+/// Creates a new Waker.
+//------------------------------------------------------------------------------
 pub fn waker_fn<F: Fn() + 'static>( f: F ) -> Waker
 {
     let raw = Arc::into_raw(Arc::new(f)) as *const ();
@@ -28,7 +31,7 @@ impl<F: Fn() + 'static> WakerHelper<F>
     );
 
     //--------------------------------------------------------------------------
-    //  Clones the Waker.
+    /// Clones the Waker.
     //--------------------------------------------------------------------------
     unsafe fn clone_waker( ptr: *const () ) -> RawWaker
     {
@@ -38,7 +41,7 @@ impl<F: Fn() + 'static> WakerHelper<F>
     }
 
     //--------------------------------------------------------------------------
-    //  Wakes the Waker.
+    /// Wakes the Waker.
     //--------------------------------------------------------------------------
     unsafe fn wake( ptr: *const () )
     {
@@ -47,7 +50,7 @@ impl<F: Fn() + 'static> WakerHelper<F>
     }
 
     //--------------------------------------------------------------------------
-    //  Wakes the Waker by reference.
+    /// Wakes the Waker by reference.
     //--------------------------------------------------------------------------
     unsafe fn wake_by_ref( ptr: *const () )
     {
@@ -56,7 +59,7 @@ impl<F: Fn() + 'static> WakerHelper<F>
     }
 
     //--------------------------------------------------------------------------
-    //  Drops the Waker.
+    /// Drops the Waker.
     //--------------------------------------------------------------------------
     unsafe fn drop_waker( ptr: *const () )
     {
