@@ -5,11 +5,12 @@
 /// structure for coroutines.
 //------------------------------------------------------------------------------
 
-use crate::future::BoxedFuture;
-
 use std::cell::RefCell;
 use std::future::Future;
 use std::task::{ Context, Poll };
+use std::pin::Pin;
+
+pub type BoxedFuture<'a, T> = Pin<Box<dyn Future<Output = T> + Send + 'a>>;
 
 //------------------------------------------------------------------------------
 /// Task

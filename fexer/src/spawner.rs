@@ -2,7 +2,7 @@
 /// # Spawner
 //------------------------------------------------------------------------------
 
-use crate::task::Task;
+use fexer_task::Task;
 
 use std::future::Future;
 use std::rc::Rc;

@@ -4,7 +4,7 @@
 /// Queue of Tasks to be executed by the executor.
 //------------------------------------------------------------------------------
 
-use crate::task::Task;
+use fexer_task::Task;
 
 use std::rc::Rc;
 use std::sync::mpsc::{ self, Receiver, Sender };

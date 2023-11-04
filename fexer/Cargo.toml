@@ -1,0 +1,8 @@
+[package]
+name = "fexer"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+fexer_task = { path = "../fexer_task" }
