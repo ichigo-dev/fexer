@@ -9,6 +9,7 @@ use crate::future::BoxedFuture;
 
 use std::cell::RefCell;
 use std::future::Future;
+use std::task::{ Context, Poll };
 
 //------------------------------------------------------------------------------
 /// Task
@@ -30,5 +31,13 @@ impl Task
         {
             future: RefCell::new(Box::pin(future)),
         }
+    }
+
+    //--------------------------------------------------------------------------
+    /// Polls the task.
+    //--------------------------------------------------------------------------
+    pub fn poll( &self, context: &mut Context ) -> Poll<()>
+    {
+        self.future.borrow_mut().as_mut().poll(context)
     }
 }

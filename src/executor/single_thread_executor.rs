@@ -5,8 +5,8 @@
 //------------------------------------------------------------------------------
 
 use crate::task_queue::TaskQueue;
-use crate::waker::waker_fn;
 use crate::utils::Result;
+use crate::waker::waker_fn;
 
 use std::task::{ Context, Poll };
 
@@ -48,7 +48,7 @@ impl SingleThreadExecutor
                     })
                 };
                 let mut context = Context::from_waker(&waker);
-                match task.future.borrow_mut().as_mut().poll(&mut context)
+                match task.poll(&mut context)
                 {
                     Poll::Ready(_) => {},
                     Poll::Pending => {},
