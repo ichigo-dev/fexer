@@ -6,3 +6,5 @@ edition = "2021"
 
 [dependencies]
 fexer_task = { path = "../fexer_task" }
+fexer_waker = { path = "../fexer_waker" }
+fexer_channel = { path = "../fexer_channel" }

@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 //------------------------------------------------------------------------------
 /// # Fexer
 ///
@@ -29,42 +27,9 @@
 /// ```
 //------------------------------------------------------------------------------
 
-mod task_queue;
-mod waker;
-mod spawner;
+mod builder;
 mod executor;
-mod utils;
+mod worker;
 
-
-#[cfg(test)]
-mod tests
-{
-    use crate::executor::Executor;
-
-    use std::thread;
-    use std::time::Duration;
-
-    async fn async_function()
-    {
-        println!("Hello from async function!");
-    }
-
-    //--------------------------------------------------------------------------
-    // Tests the Executor.
-    //--------------------------------------------------------------------------
-    #[test]
-    fn run_async_function()
-    {
-        let mut executor = Executor::single();
-        let spawner = executor.spawner();
-        spawner.spawn(async
-        {
-            for _ in 0..10
-            {
-                async_function().await;
-                thread::sleep(Duration::from_millis(100));
-            }
-        });
-        executor.run().unwrap();
-    }
-}
+pub use builder::ExecutorBuilder;
+pub use executor::Executor;

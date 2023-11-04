@@ -1,21 +1,20 @@
 //------------------------------------------------------------------------------
 /// # Executor
-///
-/// Executor that schedules and executes tasks.
 //------------------------------------------------------------------------------
 
-mod single_thread_executor;
-use single_thread_executor::SingleThreadExecutor;
+use crate::worker::Worker;
+use fexer_task::Task;
+use fexer_channel::mpmc::{ channel, Sender };
 
-use crate::utils::Result;
-use crate::spawner::Spawner;
+use std::sync::Arc;
 
 //------------------------------------------------------------------------------
 /// Executor
 //------------------------------------------------------------------------------
-pub enum Executor
+pub struct Executor
 {
-    SingleThread(SingleThreadExecutor),
+    workers: Vec<Worker>,
+    sender: Sender<Arc<Task>>,
 }
 
 impl Executor
@@ -23,33 +22,38 @@ impl Executor
     //--------------------------------------------------------------------------
     /// Creates a new Executor.
     //--------------------------------------------------------------------------
-    pub fn single() -> Self
+    pub fn new( num_threads: usize ) -> Self
     {
-        Self::SingleThread(SingleThreadExecutor::new())
+        let (sender, receiver) = channel::<Arc<Task>>();
+        let mut workers = Vec::with_capacity(num_threads);
+        for id in 0..num_threads
+        {
+            workers.push(Worker::new(id + 1, sender.clone(), receiver.clone()));
+        }
+
+        Self
+        {
+            workers,
+            sender,
+        }
     }
 
     //--------------------------------------------------------------------------
-    /// Gets a Spawner for the Executor.
+    /// Returns the sender.
     //--------------------------------------------------------------------------
-    pub fn spawner( &self ) -> Spawner
+    pub fn sender( &self ) -> Sender<Arc<Task>>
     {
-        match self
-        {
-            Self::SingleThread(executor) =>
-            {
-                Spawner::new(executor.tasks.sender().clone())
-            },
-        }
+        self.sender.clone()
     }
 
     //--------------------------------------------------------------------------
     /// Runs the Executor.
     //--------------------------------------------------------------------------
-    pub fn run( &mut self ) -> Result<()>
+    pub fn run( &self )
     {
-        match self
+        for worker in &self.workers
         {
-            Self::SingleThread(executor) => executor.run(),
+            worker.run();
         }
     }
 }

@@ -2,4 +2,6 @@
 members = [
     "fexer",
     "fexer_task",
+    "fexer_waker",
+    "fexer_channel",
 ]
