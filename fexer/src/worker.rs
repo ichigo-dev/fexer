@@ -47,17 +47,18 @@ impl Worker
     {
         let sender = self.sender.clone();
         let receiver = self.receiver.clone();
-        thread::spawn(move ||
+        thread::Builder::new().name(self.id.to_string()).spawn(move ||
         {
             loop
             {
                 let task = receiver.recv().unwrap();
+                let cloned_task = task.clone();
                 let waker =
                 {
                     let sender = sender.clone();
                     waker_fn(move ||
                     {
-                        sender.send(task.clone()).unwrap()
+                        sender.send(cloned_task.clone()).unwrap()
                     })
                 };
                 let mut context = Context::from_waker(&waker);
