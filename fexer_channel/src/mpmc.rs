@@ -7,7 +7,32 @@ use std::sync::{ mpsc, Arc, Mutex };
 //------------------------------------------------------------------------------
 /// Sender
 //------------------------------------------------------------------------------
-pub type Sender<T> = mpsc::Sender<T>;
+pub struct Sender<T>
+{
+    inner: Arc<Mutex<mpsc::Sender<T>>>,
+}
+
+impl<T> Sender<T>
+{
+    //--------------------------------------------------------------------------
+    /// Clones the receiver.
+    //--------------------------------------------------------------------------
+    pub fn clone( &self ) -> Self
+    {
+        Self
+        {
+            inner: self.inner.clone(),
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    /// Sends a message.
+    //--------------------------------------------------------------------------
+    pub fn send( &self, t: T ) -> Result<(), mpsc::SendError<T>>
+    {
+        self.inner.lock().unwrap().send(t)
+    }
+}
 
 //------------------------------------------------------------------------------
 /// Receiver
@@ -53,6 +78,10 @@ impl<T> Receiver<T>
 pub fn channel<T>() -> (Sender<T>, Receiver<T>)
 {
     let (sender, receiver) = mpsc::channel();
+    let sender = Sender
+    {
+        inner: Arc::new(Mutex::new(sender)),
+    };
     let receiver = Receiver
     {
         inner: Arc::new(Mutex::new(receiver)),

@@ -6,7 +6,7 @@ use crate::worker::Worker;
 use fexer_task::Task;
 use fexer_channel::mpmc::{ channel, Sender };
 
-use std::sync::Arc;
+use std::sync::{ Arc, Mutex };
 
 //------------------------------------------------------------------------------
 /// Executor
@@ -14,7 +14,7 @@ use std::sync::Arc;
 pub struct Executor
 {
     workers: Vec<Worker>,
-    sender: Sender<Arc<Task>>,
+    sender: Sender<Arc<Mutex<Task>>>,
 }
 
 impl Executor
@@ -24,7 +24,7 @@ impl Executor
     //--------------------------------------------------------------------------
     pub fn new( num_threads: usize ) -> Self
     {
-        let (sender, receiver) = channel::<Arc<Task>>();
+        let (sender, receiver) = channel::<Arc<Mutex<Task>>>();
         let mut workers = Vec::with_capacity(num_threads);
         for id in 0..num_threads
         {
@@ -41,7 +41,7 @@ impl Executor
     //--------------------------------------------------------------------------
     /// Returns the sender.
     //--------------------------------------------------------------------------
-    pub fn sender( &self ) -> Sender<Arc<Task>>
+    pub fn sender( &self ) -> Sender<Arc<Mutex<Task>>>
     {
         self.sender.clone()
     }
