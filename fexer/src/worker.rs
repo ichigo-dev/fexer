@@ -47,22 +47,32 @@ impl Worker
     {
         let sender = self.sender.clone();
         let receiver = self.receiver.clone();
-        thread::Builder::new().name(self.id.to_string()).spawn(move ||
+        let _ = thread::Builder::new().name(self.id.to_string()).spawn(move ||
         {
             loop
             {
-                let task = receiver.recv().unwrap();
+                let task = match receiver.recv()
+                {
+                    Ok(task) => task,
+                    Err(_) => break,
+                };
                 let cloned_task = task.clone();
                 let waker =
                 {
                     let sender = sender.clone();
                     waker_fn(move ||
                     {
-                        sender.send(cloned_task.clone()).unwrap()
+                        let _ = sender.send(cloned_task.clone());
                     })
                 };
                 let mut context = Context::from_waker(&waker);
-                match task.lock().unwrap().poll(&mut context)
+
+                let mut guard = match task.lock()
+                {
+                    Ok(guard) => guard,
+                    Err(_) => break,
+                };
+                match guard.poll(&mut context)
                 {
                     Poll::Ready(_) => {},
                     Poll::Pending => {},

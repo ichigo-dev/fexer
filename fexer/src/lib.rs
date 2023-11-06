@@ -33,13 +33,17 @@
 mod builder;
 mod executor;
 mod worker;
+mod sleep;
 
 pub use builder::ExecutorBuilder;
 pub use executor::Executor;
 
+
 #[cfg(test)]
 mod test
 {
+    use crate::sleep::SleepFuture;
+
     use crate::ExecutorBuilder;
     use fexer_task::Task;
 
@@ -61,25 +65,21 @@ mod test
 
         let spawner = executor.sender();
 
-        for _ in 0..5
+        for _ in 0..10
         {
             let task = Task::new(async
             {
-                for _ in 0..5
-                {
-                    println!("=========================================");
-                    println!("{}", thread::current().name().unwrap());
-                    async_function().await;
-                    println!("=========================================");
-
-                    thread::sleep(Duration::from_millis(1000));
-                }
+                println!("=========================================");
+                println!("{}", thread::current().name().unwrap());
+                SleepFuture::new(Duration::from_millis(1000)).await;
+                async_function().await;
+                println!("=========================================");
             });
 
             spawner.send(Arc::new(Mutex::new(task))).unwrap();
         }
 
         executor.run();
-        thread::sleep(Duration::from_millis(10000));
+        thread::sleep(Duration::from_millis(2000));
     }
 }
