@@ -22,10 +22,10 @@
 /// fn main()
 /// {
 ///    let mut executor = ExecutorBuilder::default().build();
-///    let spawner = executor.sender();
-///    let task = Task::new(async_function());
-///    spawner.send(Arc::new(Mutex::new(task)));
-///    executor.run();
+///    executor.block_on(async
+///    {
+///        async_function().await;
+///    });
 /// }
 /// ```
 //------------------------------------------------------------------------------
@@ -81,5 +81,18 @@ mod test
 
         executor.run();
         thread::sleep(Duration::from_millis(2000));
+    }
+
+    #[test]
+    fn test_executor_block_on()
+    {
+        let executor = ExecutorBuilder::new()
+            .num_threads(4)
+            .build();
+        executor.block_on(async
+        {
+            async_function().await;
+        });
+        thread::sleep(Duration::from_millis(1000));
     }
 }

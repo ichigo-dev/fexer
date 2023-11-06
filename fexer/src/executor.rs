@@ -5,8 +5,10 @@
 use crate::worker::Worker;
 use fexer_task::Task;
 use fexer_channel::mpmc::{ channel, Sender };
+use fexer_waker::waker_fn;
 
 use std::sync::{ Arc, Mutex };
+use std::task::{ Context, Poll };
 
 //------------------------------------------------------------------------------
 /// Executor
@@ -44,6 +46,25 @@ impl Executor
     pub fn sender( &self ) -> Sender<Arc<Mutex<Task>>>
     {
         self.sender.clone()
+    }
+
+    //--------------------------------------------------------------------------
+    /// Blocks the current thread on the given future.
+    //--------------------------------------------------------------------------
+    pub fn block_on<F>( &self, future: F ) -> F::Output
+        where
+            F: std::future::Future<Output = ()> + Send + 'static,
+    {
+        let task = Arc::new(Mutex::new(Task::new(future)));
+        let waker = waker_fn(|| {});
+        let mut context = Context::from_waker(&waker);
+        loop
+        {
+            if let Poll::Ready(output) = task.lock().unwrap().poll(&mut context)
+            {
+                return output;
+            }
+        }
     }
 
     //--------------------------------------------------------------------------
